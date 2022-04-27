@@ -1,8 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import SocialSignin from "./SocialSignin";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { account } from "../services/appwriteConfig";
 
 const Signup = () => {
+  const history = useHistory();
+  const [userDetails, setUserDetails] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    try {
+      const newUser = await account.create(
+        userDetails.name,
+        userDetails.email,
+        userDetails.password
+      );
+      history.push("/home");
+      await account.createSession(userDetails.email, userDetails.password);
+      console.log(newUser);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div>
       <h2 className="mt-5 text-center">Super Auth</h2>
@@ -14,6 +38,12 @@ const Signup = () => {
             Name
           </label>
           <input
+            onChange={(e) => {
+              setUserDetails({
+                ...userDetails,
+                name: e.target.value,
+              });
+            }}
             type="text"
             className="form-control"
             id="name"
@@ -26,6 +56,12 @@ const Signup = () => {
             Email address
           </label>
           <input
+            onChange={(e) => {
+              setUserDetails({
+                ...userDetails,
+                email: e.target.value,
+              });
+            }}
             type="email"
             className="form-control"
             id="email"
@@ -38,6 +74,12 @@ const Signup = () => {
             Password
           </label>
           <input
+            onChange={(e) => {
+              setUserDetails({
+                ...userDetails,
+                password: e.target.value,
+              });
+            }}
             type="password"
             className="form-control"
             id="password"
@@ -51,7 +93,11 @@ const Signup = () => {
           </Link>
         </div>
 
-        <button type="submit" className="btn btn-success">
+        <button
+          onClick={(e) => handleSignUp(e)}
+          type="submit"
+          className="btn btn-success"
+        >
           Signup
         </button>
       </form>
