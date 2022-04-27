@@ -14,14 +14,13 @@ const Signup = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      const newUser = await account.create(
+      await account.create(
         userDetails.name,
         userDetails.email,
         userDetails.password
       );
-      history.push("/home");
       await account.createSession(userDetails.email, userDetails.password);
-      console.log(newUser);
+      history.push("/home");
     } catch (error) {
       console.log(error.message);
     }
