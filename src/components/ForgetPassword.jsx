@@ -6,11 +6,10 @@ const ForgetPassword = () => {
       <h2 className="text-center"> Password Recovery</h2>
       <form className="container">
         <div className="mb-3">
-          <label for="exampleInputPassword1" className="form-label">
+          <label htmlFor="exampleInputPassword1" className="form-label">
             Enter you email
           </label>
           <input
-            
             type="email"
             name="password"
             required

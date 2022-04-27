@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { account } from "../services/appwriteConfig";
 import SocialSignin from "./SocialSignin";
 
 const Login = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState({
     email: "",
     password: "",
@@ -15,7 +15,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await account.createSession(userDetails.email, userDetails.password);
-      history.push("/home");
+      navigate("/home");
     } catch (error) {
       console.log(error.message);
     }
@@ -27,7 +27,7 @@ const Login = () => {
       <h3 className="text-center">Login</h3>
       <form className="container">
         <div className="mb-3">
-          <label for="exampleInputEmail1" className="form-label">
+          <label htmlFor="exampleInputEmail1" className="form-label">
             Email address
           </label>
           <input
@@ -45,7 +45,7 @@ const Login = () => {
           />
         </div>
         <div className="mb-3">
-          <label for="exampleInputPassword1" className="form-label">
+          <label htmlFor="exampleInputPassword1" className="form-label">
             Password
           </label>
           <input

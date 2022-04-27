@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import SocialSignin from "./SocialSignin";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { account } from "../services/appwriteConfig";
 
 const Signup = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState({
     name: "",
     email: "",
@@ -20,7 +20,7 @@ const Signup = () => {
         userDetails.password
       );
       await account.createSession(userDetails.email, userDetails.password);
-      history.push("/home");
+      navigate("/home");
     } catch (error) {
       console.log(error.message);
     }
@@ -33,7 +33,7 @@ const Signup = () => {
 
       <form className="container">
         <div className="mb-3">
-          <label for="name" className="form-label">
+          <label htmlFor="name" className="form-label">
             Name
           </label>
           <input
@@ -51,7 +51,7 @@ const Signup = () => {
           />
         </div>
         <div className="mb-3">
-          <label for="email" className="form-label">
+          <label htmlFor="email" className="form-label">
             Email address
           </label>
           <input
@@ -69,7 +69,7 @@ const Signup = () => {
           />
         </div>
         <div className="mb-3">
-          <label for="password" className="form-label">
+          <label htmlFor="password" className="form-label">
             Password
           </label>
           <input

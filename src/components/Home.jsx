@@ -1,25 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { account } from "../services/appwriteConfig";
 
 const Home = () => {
   const [userDetails, setUserDetails] = useState();
-  const history = useHistory();
+  const navigate = useNavigate();
 
-  useEffect(async () => {
+  const fetchUser = async () => {
     try {
       const data = await account.get();
       setUserDetails(data);
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
     }
+  };
+
+  useEffect(() => {
+    fetchUser();
   }, [userDetails]);
 
   const handleLogOut = async (e) => {
     e.preventDefault();
     try {
       await account.deleteSession(`current`);
-      history.push("/");
+      navigate("/");
     } catch (error) {
       console.log(error.message);
     }
@@ -57,7 +61,7 @@ const Home = () => {
         <h2 className="text-center my-3">
           Please login first to see the homepage
         </h2>
-        <button className="btn btn-dark" onClick={() => history.push("/")}>
+        <button className="btn btn-dark" onClick={() => navigate("/")}>
           Login
         </button>
       </div>

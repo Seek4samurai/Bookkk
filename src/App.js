@@ -1,33 +1,22 @@
 import React from "react";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import ForgetPassword from "./components/ForgetPassword";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import ForgetPassword from "./components/ForgetPassword";
-import ResetPassword from "./components/ResetPassword";
 
 function App() {
   return (
-    <Router>
-      <Switch>
-        <Route path="/signup">
-          <Signup />
-        </Route>
-        <Route path="/home">
-          <Home />
-        </Route>
-        <Route path="/forget-password">
-          <ForgetPassword />
-        </Route>
-        <Route path="/reset-password">
-          <ResetPassword />
-        </Route>
-        <Route path="/">
-          <Login />
-        </Route>
-      </Switch>
-    </Router>
+    <div>
+      <Routes>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/forget-password" element={<ForgetPassword />} />
+        <Route exact path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </div>
   );
 }
 
