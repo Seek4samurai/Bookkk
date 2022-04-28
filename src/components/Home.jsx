@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { account } from "../services/appwriteConfig";
+import { account, db } from "../services/appwriteConfig";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState();
+  const [userInput, setUserInput] = useState({
+    user: "",
+    message: "",
+    upvotes: 0,
+    downvotes: 0,
+  });
 
   const fetchUser = async () => {
     try {
@@ -31,6 +37,23 @@ const Home = () => {
     }
   };
 
+  // Posting data
+  const handlePost = async (e) => {
+    try {
+      const res = await db.createDocument(
+        process.env.REACT_APP_COLLECTION_ID,
+        "unique()",
+        {
+          user: userDetails.$id,
+          ...userInput,
+        }
+      );
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (userDetails) {
     return (
       <div className="container-xxl border mt-5 p-3">
@@ -47,6 +70,33 @@ const Home = () => {
           </button>
         </div>
 
+        {/* User's field here ----- */}
+        <div className="p-3 ">
+          <form>
+            <label htmlFor="inputfield" className="form-label fs-2 fw-bold">
+              What's on your mind?
+            </label>
+            <input
+              onChange={(e) => {
+                setUserInput({
+                  ...userInput,
+                  message: e.target.value,
+                });
+              }}
+              id="inputfield"
+              className="form-control p-2 mt-2 mb-2"
+            ></input>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              onClick={(e) => handlePost(e)}
+            >
+              Post
+            </button>
+          </form>
+        </div>
+
+        {/* All Posts here ----- */}
         <div className="flex justify-center m-2">
           <div className="flex border p-3">
             <h2>Content Heading</h2>
