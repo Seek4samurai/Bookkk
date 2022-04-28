@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import SocialSignin from "./SocialSignin";
 import { Link, useNavigate } from "react-router-dom";
 import { account } from "../services/appwriteConfig";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const Signup = () => {
       await account.createSession(userDetails.email, userDetails.password);
       navigate("/home");
     } catch (error) {
-      console.log(error.message);
+      toast.error(`${error.message}`);
     }
   };
 
@@ -47,7 +49,7 @@ const Signup = () => {
             className="form-control"
             id="name"
             aria-describedby="name"
-            name="email"
+            name="name"
           />
         </div>
         <div className="mb-3">
@@ -65,7 +67,7 @@ const Signup = () => {
             className="form-control"
             id="email"
             aria-describedby="email"
-            name="password"
+            name="email"
           />
         </div>
         <div className="mb-3">

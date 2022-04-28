@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { account } from "../services/appwriteConfig";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
-  const [userDetails, setUserDetails] = useState();
   const navigate = useNavigate();
+  const [userDetails, setUserDetails] = useState();
 
   const fetchUser = async () => {
     try {
       const data = await account.get();
       setUserDetails(data);
     } catch (error) {
-      console.log(error);
+      toast.error(`${error.message}`);
     }
   };
 
@@ -25,16 +27,16 @@ const Home = () => {
       await account.deleteSession(`current`);
       navigate("/");
     } catch (error) {
-      console.log(error.message);
+      toast.error(`${error.message}`);
     }
   };
 
   if (userDetails) {
     return (
       <div className="container-xxl border mt-5 p-3">
-        <h3 className="text-center"> Super Auth </h3>
+        <h3 className="text-center">Bookk</h3>
         <h6 className="d-flex justify-content-end">
-          {/* Welcome, {userDetails.name} */}
+          Welcome, {userDetails.$id}
         </h6>
         <div className="d-flex justify-content-end align-items-center">
           <button
@@ -53,6 +55,17 @@ const Home = () => {
             <button>Downvote</button>
           </div>
         </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     );
   } else {
