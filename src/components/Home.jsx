@@ -11,6 +11,7 @@ const Home = () => {
   const [userInput, setUserInput] = useState({
     user: "",
     message: "",
+    description: "",
     upvotes: 0,
     downvotes: 0,
   });
@@ -34,7 +35,7 @@ const Home = () => {
       await account.deleteSession(`current`);
       navigate("/");
     } catch (error) {
-      toast.error(`${error.message}`);
+      console.log(error);
     }
   };
 
@@ -46,8 +47,10 @@ const Home = () => {
         ...userInput,
         user: userDetails.$id,
       });
+      document.getElementById("inputfield").value = "";
+      document.getElementById("inputfieldDesc").value = "";
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
     }
   };
 
@@ -70,6 +73,7 @@ const Home = () => {
         {/* User's field here ----- */}
         <div className="p-3 ">
           <form>
+            {/* Heading */}
             <label htmlFor="inputfield" className="form-label fs-2 fw-bold">
               What's on your mind?
             </label>
@@ -83,6 +87,23 @@ const Home = () => {
               id="inputfield"
               className="form-control p-2 mt-2 mb-2"
             ></input>
+
+            {/* Description */}
+            <label htmlFor="inputfieldDesc" className="form-label fs-5">
+              Enter description
+            </label>
+            <textarea
+              onChange={(e) => {
+                setUserInput({
+                  ...userInput,
+                  description: e.target.value,
+                });
+              }}
+              id="inputfieldDesc"
+              className="form-control p-2 mt-2 mb-2 "
+            ></textarea>
+
+            {/* Submit */}
             <button
               type="submit"
               className="btn btn-primary"
@@ -97,6 +118,7 @@ const Home = () => {
         <div className="flex justify-center m-2">
           <Post></Post>
         </div>
+
         <ToastContainer
           position="top-right"
           autoClose={3000}

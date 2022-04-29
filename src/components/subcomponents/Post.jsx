@@ -11,9 +11,6 @@ const Post = () => {
     try {
       const res = await db.listDocuments(process.env.REACT_APP_COLLECTION_ID);
       setDocuments(res.documents);
-      // res.documents.forEach((objects) => {
-      //   console.log(objects.$id);
-      // });
     } catch (error) {
       console.log(error);
     }
@@ -28,9 +25,9 @@ const Post = () => {
       {documents &&
         documents.map((doc) => {
           return (
-            <div className="m-2 p-2 border">
-              <h3>{doc.message}</h3>
-              <p>Hello world</p>
+            <div className="m-2 p-2 border rounded">
+              <h3 className="text-break">{doc.message}</h3>
+              <p className="text-break">{doc.description}</p>
               <button className="btn btn-outline-primary mx-2">
                 <FaArrowUp></FaArrowUp>
               </button>
