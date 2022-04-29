@@ -39,20 +39,34 @@ const Home = () => {
 
   // Posting data
   const handlePost = async (e) => {
+    e.preventDefault();
     try {
       const res = await db.createDocument(
         process.env.REACT_APP_COLLECTION_ID,
         "unique()",
         {
-          user: userDetails.$id,
           ...userInput,
+          user: userDetails.$id,
         }
       );
       console.log(res);
+      window.location.reload();
     } catch (error) {
       console.log(error);
     }
   };
+
+  // Getting all documents
+  const getDocument = async () => {
+    const documents = await db.listDocuments(
+      process.env.REACT_APP_COLLECTION_ID
+    );
+    console.log(documents.documents[0].message);
+  };
+
+  useEffect(() => {
+    getDocument();
+  }, []);
 
   if (userDetails) {
     return (
