@@ -3,9 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { account } from "../services/appwriteConfig";
 import SocialSignin from "./SocialSignin";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "react-toastify/dist/";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -20,7 +17,7 @@ const Login = () => {
       await account.createSession(userDetails.email, userDetails.password);
       navigate("/home");
     } catch (error) {
-      toast.error(`${error.message}`);
+      console.log(error);
     }
   };
 

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { account, db } from "../services/appwriteConfig";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Post from "./subcomponents/Post";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -41,32 +42,14 @@ const Home = () => {
   const handlePost = async (e) => {
     e.preventDefault();
     try {
-      const res = await db.createDocument(
-        process.env.REACT_APP_COLLECTION_ID,
-        "unique()",
-        {
-          ...userInput,
-          user: userDetails.$id,
-        }
-      );
-      console.log(res);
-      window.location.reload();
+      await db.createDocument(process.env.REACT_APP_COLLECTION_ID, "unique()", {
+        ...userInput,
+        user: userDetails.$id,
+      });
     } catch (error) {
       console.log(error);
     }
   };
-
-  // Getting all documents
-  const getDocument = async () => {
-    const documents = await db.listDocuments(
-      process.env.REACT_APP_COLLECTION_ID
-    );
-    console.log(documents.documents[0].message);
-  };
-
-  useEffect(() => {
-    getDocument();
-  }, []);
 
   if (userDetails) {
     return (
@@ -112,12 +95,7 @@ const Home = () => {
 
         {/* All Posts here ----- */}
         <div className="flex justify-center m-2">
-          <div className="flex border p-3">
-            <h2>Content Heading</h2>
-            <p>Content Paragraph</p>
-            <button>Upvote</button>
-            <button>Downvote</button>
-          </div>
+          <Post></Post>
         </div>
         <ToastContainer
           position="top-right"
