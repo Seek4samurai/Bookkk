@@ -18,10 +18,6 @@ const Post = () => {
     }
   };
 
-  // const totalUpvotes = documents.map((doc) => {
-  //   return doc.$id;
-  // });
-
   // User's info -----------------------------------------------------------------------------------
   const fetchUser = async () => {
     try {
@@ -38,20 +34,75 @@ const Post = () => {
 
   // Upvotes and Downvotes -----------------------------------------------------------------------------------
   const handleUpvotes = async (doc) => {
-    console.log(documents);
+    setUpvote(true);
+    const upVote = documents.upvote;
+
     const upvotedBy = await db.getDocument(
       process.env.REACT_APP_COLLECTION_ID,
       doc.$id
     );
 
-    // pushing the user id of users that upvotes the post
-    const upvotedByArray = upvotedBy.upvotedBy;
-    Array.prototype.push.apply(upvotedByArray, [userDetails.$id]);
+    // check if user liked this already or not
+    if (doc.upvotedBy.includes(userDetails.$id) === true) {
+      const upvotedByArray = upvotedBy.upvotedBy;
+      // filtering array - removing the current user's id from upvotedBy array
+      var filteredArray = upvotedByArray.filter((e) => e !== userDetails.$id);
 
-    // updating the document on database
-    await db.updateDocument(process.env.REACT_APP_COLLECTION_ID, doc.$id, {
-      upvotedBy: upvotedByArray,
-    });
+      // updating the document on database
+      await db.updateDocument(process.env.REACT_APP_COLLECTION_ID, doc.$id, {
+        upvotedBy: filteredArray,
+        upvotes: upVote - 1,
+      });
+    }
+
+    if (doc.upvotedBy.includes(userDetails.$id) === false) {
+      setDownvote(false); // upvoting means removing downvote from the post
+      // pushing the user id of users that upvotes the post
+      const upvotedByArray = upvotedBy.upvotedBy;
+      Array.prototype.push.apply(upvotedByArray, [userDetails.$id]);
+
+      // updating the document on database
+      await db.updateDocument(process.env.REACT_APP_COLLECTION_ID, doc.$id, {
+        upvotedBy: upvotedByArray,
+        upvotes: upVote + 1,
+      });
+    }
+  };
+
+  const handleDownvotes = async (doc) => {
+    setDownvote(true);
+    const downVote = documents.downvote;
+
+    const downvotedBy = await db.getDocument(
+      process.env.REACT_APP_COLLECTION_ID,
+      doc.$id
+    );
+
+    // check if user disliked this already or not
+    if (doc.downvotedBy.includes(userDetails.$id) === true) {
+      const downvotedByArray = downvotedBy.downvotedBy;
+      // filtering array - removing the current user's id from downvotedBy array
+      var filteredArray = downvotedByArray.filter((e) => e !== userDetails.$id);
+
+      // updating the document on database
+      await db.updateDocument(process.env.REACT_APP_COLLECTION_ID, doc.$id, {
+        downvotedBy: filteredArray,
+        downvotes: downVote - 1,
+      });
+    }
+
+    if (doc.downvotedBy.includes(userDetails.$id) === false) {
+      setUpvote(false); // downvoting means removing upvote from the post
+      // pushing the user id of users that downvotes the post
+      const downvotedByArray = downvotedBy.downvotedBy;
+      Array.prototype.push.apply(downvotedByArray, [userDetails.$id]);
+
+      // updating the document on database
+      await db.updateDocument(process.env.REACT_APP_COLLECTION_ID, doc.$id, {
+        downvotedBy: downvotedByArray,
+        downvotes: downVote + 1,
+      });
+    }
   };
 
   // Re-rendering Post component when data or votes changes
@@ -77,13 +128,13 @@ const Post = () => {
                 </button>
                 <button
                   className="btn btn-outline-danger"
-                  // onClick={() => handleDownvotes(doc)}
+                  onClick={() => handleDownvotes(doc)}
                 >
                   <FaArrowDown></FaArrowDown>
                   {doc.downvotes === 0 ? (
-                    <span className="mx-1">{doc.downvotes}</span>
+                    <span className="mx-1">{doc.downvotedBy.length}</span>
                   ) : (
-                    <span className="mx-1">-{doc.downvotes}</span>
+                    <span className="mx-1">-{doc.downvotedBy.length}</span>
                   )}
                 </button>
               </div>
