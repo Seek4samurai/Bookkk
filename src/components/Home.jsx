@@ -43,10 +43,12 @@ const Home = () => {
   // Posting data --------------------------------------------------
   const handlePost = async (e) => {
     e.preventDefault();
+    const currentDate = Date().toString();
     try {
       await db.createDocument(process.env.REACT_APP_COLLECTION_ID, "unique()", {
         ...userInput,
         user: userDetails.$id,
+        date: currentDate,
       });
       document.getElementById("inputfield").value = "";
       document.getElementById("inputfieldDesc").value = "";

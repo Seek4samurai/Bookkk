@@ -129,11 +129,13 @@ const Post = () => {
       // removing upvote if user downvotes a post
       const upvotedByArray = upvotedBy.upvotedBy;
       // filtering array - removing the current user's id from upvotedBy array
-      var filteredArray = upvotedByArray.filter((e) => e !== userDetails.$id);
+      var newFilteredArray = upvotedByArray.filter(
+        (e) => e !== userDetails.$id
+      );
 
       // updating the document on database
       await db.updateDocument(process.env.REACT_APP_COLLECTION_ID, doc.$id, {
-        upvotedBy: filteredArray,
+        upvotedBy: newFilteredArray,
         upvotes: upVote - 1,
       });
     }
@@ -152,25 +154,28 @@ const Post = () => {
             <div className="m-2 p-2 border rounded">
               <h3 className="text-break">{doc.message}</h3>
               <p className="text-break">{doc.description}</p>
-              <div className="d-flex">
-                <button
-                  className="btn btn-outline-primary mx-2 d-flex align-items-center"
-                  onClick={() => handleUpvotes(doc)}
-                >
-                  <FaArrowUp></FaArrowUp>
-                  <span className="mx-1">{doc.upvotedBy.length}</span>
-                </button>
-                <button
-                  className="btn btn-outline-danger"
-                  onClick={() => handleDownvotes(doc)}
-                >
-                  <FaArrowDown></FaArrowDown>
-                  {doc.downvotedBy.length === 0 ? (
-                    <span className="mx-1">{doc.downvotedBy.length}</span>
-                  ) : (
-                    <span className="mx-1">-{doc.downvotedBy.length}</span>
-                  )}
-                </button>
+              <div className="d-flex justify-content-between">
+                <div className="d-flex align-items-center">
+                  <button
+                    className="btn btn-outline-primary mx-2"
+                    onClick={() => handleUpvotes(doc)}
+                  >
+                    <FaArrowUp></FaArrowUp>
+                    <span className="mx-1">{doc.upvotedBy.length}</span>
+                  </button>
+                  <button
+                    className="btn btn-outline-danger"
+                    onClick={() => handleDownvotes(doc)}
+                  >
+                    <FaArrowDown></FaArrowDown>
+                    {doc.downvotedBy.length === 0 ? (
+                      <span className="mx-1">{doc.downvotedBy.length}</span>
+                    ) : (
+                      <span className="mx-1">-{doc.downvotedBy.length}</span>
+                    )}
+                  </button>
+                </div>
+                <p className="m-2 d-flex ">{doc.date}</p>
               </div>
             </div>
           );
