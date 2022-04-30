@@ -16,12 +16,13 @@ const Home = () => {
     downvotes: 0,
   });
 
+  // Getting active user --------------------------------------------------
   const fetchUser = async () => {
     try {
       const data = await account.get();
       setUserDetails(data);
     } catch (error) {
-      toast.error(`${error.message}`);
+      console.log(error);
     }
   };
 
@@ -39,7 +40,7 @@ const Home = () => {
     }
   };
 
-  // Posting data
+  // Posting data --------------------------------------------------
   const handlePost = async (e) => {
     e.preventDefault();
     try {
@@ -133,6 +134,7 @@ const Home = () => {
       </div>
     );
   } else {
+    // asking to login if no user logged in
     return (
       <div className="flex text-center">
         <h2 className="text-center my-3">

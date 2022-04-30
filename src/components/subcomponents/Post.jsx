@@ -105,7 +105,7 @@ const Post = () => {
     }
   };
 
-  // Re-rendering Post component when data or votes changes
+  // Re-rendering Post component when data or votes changes--------------------------------------------------
   useEffect(() => {
     getDocument();
   }, [documents, upvote, downvote]);
