@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { account } from "../services/appwriteConfig";
-import SocialSignin from "./SocialSignin";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -23,8 +22,13 @@ const Login = () => {
 
   return (
     <div>
-      <h2 className="mt-5 text-center">Super Auth</h2>
-      <h3 className="text-center">Login</h3>
+      <h2 className="mt-5 text-center fw-light fs-1">
+        Bookkk - an internet's opinionator
+      </h2>
+      <p className="text-center fw-light fs-6">
+        Free, Open source and anonymous
+      </p>
+      <h3 className="mt-5 text-center">Login</h3>
       <form className="container">
         <div className="mb-3">
           <label htmlFor="exampleInputEmail1" className="form-label">
@@ -62,20 +66,20 @@ const Login = () => {
             id="exampleInputPassword1"
           />
         </div>
-        <div className="mb-3">
-          <span>First time here ? </span>
-          <Link to="/signup">
-            <button className="btn btn-primary mx-1">Signup</button>
-          </Link>
+        <div className="d-flex justify-content-between">
+          <div className="mb-3">
+            <span>First time here ? </span>
+            <Link to="/signup">
+              <button className="btn btn-primary mx-1">Signup</button>
+            </Link>
+          </div>
+          <div>
+            <span>Forget password ? </span>
+            <Link to="/forget-password">
+              <button className="btn btn-danger mx-1">Forget Password</button>
+            </Link>
+          </div>
         </div>
-
-        <div>
-          <span>Forget password ? </span>
-          <Link to="/forget-password">
-            <button className="btn btn-danger mx-1">Forget Password</button>
-          </Link>
-        </div>
-
         <button
           onClick={(e) => handleSignIn(e)}
           type="submit"
@@ -84,7 +88,6 @@ const Login = () => {
           Login
         </button>
       </form>
-      <SocialSignin />
     </div>
   );
 };

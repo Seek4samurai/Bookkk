@@ -4,6 +4,7 @@ import { account, db } from "../services/appwriteConfig";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Post from "./subcomponents/Post";
+import { FaHome } from "react-icons/fa";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -60,6 +61,14 @@ const Home = () => {
   if (userDetails) {
     return (
       <div className="container-xxl border mt-5 p-3">
+        <button
+          className="btn fixed-bottom m-5"
+          onClick={() => {
+            window.location.reload();
+          }}
+        >
+          <FaHome size={"3rem"}></FaHome>
+        </button>
         <h3 className="text-center">Bookk</h3>
         <h6 className="d-flex justify-content-end">
           Welcome, {userDetails.$id}

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import SocialSignin from "./SocialSignin";
 import { Link, useNavigate } from "react-router-dom";
 import { account } from "../services/appwriteConfig";
 import "react-toastify/dist/ReactToastify.css";
@@ -29,8 +28,13 @@ const Signup = () => {
 
   return (
     <div>
-      <h2 className="mt-5 text-center">Super Auth</h2>
-      <h3 className=" text-center">Signup</h3>
+      <h2 className="mt-5 text-center fw-light fs-1">
+        Bookkk - an internet's opinionator
+      </h2>
+      <p className="text-center fw-light fs-6">
+        Free, Open source and anonymous
+      </p>
+      <h3 className="mt-5 text-center">Sign up</h3>
 
       <form className="container">
         <div className="mb-3">
@@ -101,8 +105,6 @@ const Signup = () => {
           Signup
         </button>
       </form>
-
-      <SocialSignin />
     </div>
   );
 };

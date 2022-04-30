@@ -11,7 +11,16 @@ const Post = () => {
   // Getting all documents -----------------------------------------------------------------------------------
   const getDocument = async () => {
     try {
-      const res = await db.listDocuments(process.env.REACT_APP_COLLECTION_ID);
+      const res = await db.listDocuments(
+        process.env.REACT_APP_COLLECTION_ID,
+        [],
+        100,
+        0,
+        "",
+        "",
+        ["date"],
+        ["DESC"]
+      );
       setDocuments(res.documents);
     } catch (error) {
       console.log(error);
