@@ -35,9 +35,14 @@ const Post = () => {
   // Upvotes and Downvotes -----------------------------------------------------------------------------------
   const handleUpvotes = async (doc) => {
     setUpvote(true);
+    const downVote = documents.downvote;
     const upVote = documents.upvote;
 
     const upvotedBy = await db.getDocument(
+      process.env.REACT_APP_COLLECTION_ID,
+      doc.$id
+    );
+    const downvotedBy = await db.getDocument(
       process.env.REACT_APP_COLLECTION_ID,
       doc.$id
     );
@@ -66,13 +71,31 @@ const Post = () => {
         upvotedBy: upvotedByArray,
         upvotes: upVote + 1,
       });
+
+      // removing downvote if user downvotes a post
+      const downvotedByArray = downvotedBy.downvotedBy;
+      // filtering array - removing the current user's id from downvotedBy array
+      var newFilteredArray = downvotedByArray.filter(
+        (e) => e !== userDetails.$id
+      );
+
+      // updating the document on database
+      await db.updateDocument(process.env.REACT_APP_COLLECTION_ID, doc.$id, {
+        downvotedBy: newFilteredArray,
+        downvotes: downVote - 1,
+      });
     }
   };
 
   const handleDownvotes = async (doc) => {
     setDownvote(true);
+    const upVote = documents.upvote;
     const downVote = documents.downvote;
 
+    const upvotedBy = await db.getDocument(
+      process.env.REACT_APP_COLLECTION_ID,
+      doc.$id
+    );
     const downvotedBy = await db.getDocument(
       process.env.REACT_APP_COLLECTION_ID,
       doc.$id
@@ -101,6 +124,17 @@ const Post = () => {
       await db.updateDocument(process.env.REACT_APP_COLLECTION_ID, doc.$id, {
         downvotedBy: downvotedByArray,
         downvotes: downVote + 1,
+      });
+
+      // removing upvote if user downvotes a post
+      const upvotedByArray = upvotedBy.upvotedBy;
+      // filtering array - removing the current user's id from upvotedBy array
+      var filteredArray = upvotedByArray.filter((e) => e !== userDetails.$id);
+
+      // updating the document on database
+      await db.updateDocument(process.env.REACT_APP_COLLECTION_ID, doc.$id, {
+        upvotedBy: filteredArray,
+        upvotes: upVote - 1,
       });
     }
   };
@@ -131,7 +165,7 @@ const Post = () => {
                   onClick={() => handleDownvotes(doc)}
                 >
                   <FaArrowDown></FaArrowDown>
-                  {doc.downvotes === 0 ? (
+                  {doc.downvotedBy.length === 0 ? (
                     <span className="mx-1">{doc.downvotedBy.length}</span>
                   ) : (
                     <span className="mx-1">-{doc.downvotedBy.length}</span>
