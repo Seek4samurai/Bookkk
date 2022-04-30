@@ -5,17 +5,36 @@ import { FaArrowUp, FaArrowDown } from "react-icons/fa/";
 const Post = () => {
   const [userDetails, setUserDetails] = useState();
   const [documents, setDocuments] = useState();
+  const [totalDocuments, setTotalDocuments] = useState();
   const [upvote, setUpvote] = useState();
   const [downvote, setDownvote] = useState();
+  const [page, setPage] = useState(0);
+  const [pageEnd, setPageEnd] = useState(false);
 
-  // Getting all documents -----------------------------------------------------------------------------------
+  // Getting all documents ---------------------------------------------------------------------------------
+  const getAllDocuments = async () => {
+    try {
+      const allPosts = await db.listDocuments(
+        process.env.REACT_APP_COLLECTION_ID
+      );
+      return allPosts.total;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllDocuments().then((doc) => setTotalDocuments(doc));
+  }, []);
+
+  // Getting all documents to be listed ---------------------------------------------------------------------
   const getDocument = async () => {
     try {
       const res = await db.listDocuments(
         process.env.REACT_APP_COLLECTION_ID,
         [],
-        100,
-        0,
+        10,
+        page,
         "",
         "",
         ["date"],
@@ -24,6 +43,42 @@ const Post = () => {
       setDocuments(res.documents);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const nextData = async () => {
+    if (page < totalDocuments) {
+      setPage(page + 10);
+      await db.listDocuments(
+        process.env.REACT_APP_COLLECTION_ID,
+        [],
+        0,
+        page,
+        "",
+        "",
+        ["date"],
+        ["DESC"]
+      );
+    }
+    if (page + 10 > totalDocuments) {
+      setPageEnd(true);
+    }
+  };
+
+  const previousData = async () => {
+    if (page > 0) {
+      setPage(page - 10);
+      await db.listDocuments(
+        process.env.REACT_APP_COLLECTION_ID,
+        [],
+        0,
+        page,
+        "",
+        "",
+        ["date"],
+        ["DESC"]
+      );
+      setPageEnd(false);
     }
   };
 
@@ -41,7 +96,7 @@ const Post = () => {
     fetchUser();
   }, [userDetails]);
 
-  // Upvotes and Downvotes -----------------------------------------------------------------------------------
+  // Upvotes and Downvotes -------------------------------------------------------------------------
   const handleUpvotes = async (doc) => {
     setUpvote(true);
     const downVote = documents.downvote;
@@ -156,40 +211,55 @@ const Post = () => {
   }, [documents, upvote, downvote]);
 
   return (
-    <div>
-      {documents &&
-        documents.map((doc) => {
-          return (
-            <div className="m-2 p-2 border rounded">
-              <h3 className="text-break">{doc.message}</h3>
-              <p className="text-break">{doc.description}</p>
-              <div className="d-flex justify-content-between">
-                <div className="d-flex align-items-center">
-                  <button
-                    className="btn btn-outline-primary mx-2"
-                    onClick={() => handleUpvotes(doc)}
-                  >
-                    <FaArrowUp></FaArrowUp>
-                    <span className="mx-1">{doc.upvotedBy.length}</span>
-                  </button>
-                  <button
-                    className="btn btn-outline-danger"
-                    onClick={() => handleDownvotes(doc)}
-                  >
-                    <FaArrowDown></FaArrowDown>
-                    {doc.downvotedBy.length === 0 ? (
-                      <span className="mx-1">{doc.downvotedBy.length}</span>
-                    ) : (
-                      <span className="mx-1">-{doc.downvotedBy.length}</span>
-                    )}
-                  </button>
+    <>
+      <div>
+        {documents &&
+          documents.map((doc) => {
+            return (
+              <div className="m-2 p-2 border rounded">
+                <h3 className="text-break">{doc.message}</h3>
+                <p className="text-break">{doc.description}</p>
+                <div className="d-flex justify-content-between">
+                  <div className="d-flex align-items-center">
+                    <button
+                      className="btn btn-outline-primary mx-2"
+                      onClick={() => handleUpvotes(doc)}
+                    >
+                      <FaArrowUp></FaArrowUp>
+                      <span className="mx-1">{doc.upvotedBy.length}</span>
+                    </button>
+                    <button
+                      className="btn btn-outline-danger"
+                      onClick={() => handleDownvotes(doc)}
+                    >
+                      <FaArrowDown></FaArrowDown>
+                      {doc.downvotedBy.length === 0 ? (
+                        <span className="mx-1">{doc.downvotedBy.length}</span>
+                      ) : (
+                        <span className="mx-1">-{doc.downvotedBy.length}</span>
+                      )}
+                    </button>
+                  </div>
+                  <p className="m-2 d-flex ">{doc.date}</p>
                 </div>
-                <p className="m-2 d-flex ">{doc.date}</p>
               </div>
-            </div>
-          );
-        })}
-    </div>
+            );
+          })}
+        {pageEnd === true ? (
+          <h1 className="fw-light text-center">
+            The End...<span>you've made it to then end?</span>
+          </h1>
+        ) : null}
+        <div className="my-5 d-flex justify-content-between">
+          <button className="btn btn-success" onClick={() => previousData()}>
+            Previous
+          </button>
+          <button className="btn btn-success" onClick={() => nextData()}>
+            Next
+          </button>
+        </div>
+      </div>
+    </>
   );
 };
 
