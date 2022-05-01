@@ -9,7 +9,7 @@ const ForgetPassword = () => {
 
     await account.createRecovery(
       userEmail,
-      "http://localhost:3000/reset-password"
+      "https://bookkk.herokuapp.com/reset-password"
     );
     console.log("Email has been sent");
   };
