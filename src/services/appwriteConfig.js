@@ -3,7 +3,7 @@ import { Appwrite } from "appwrite";
 const sdk = new Appwrite();
 
 sdk
-  .setEndpoint("https://localhost/v1")
+  .setEndpoint(process.env.REACT_APP_API_ENDPOINT)
   .setProject(process.env.REACT_APP_PROJECT_ID);
 
 export const account = sdk.account;
