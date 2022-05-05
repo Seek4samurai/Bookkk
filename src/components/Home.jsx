@@ -29,7 +29,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchUser();
-  }, [userDetails]);
+  }, []);
 
   const handleLogOut = async (e) => {
     e.preventDefault();
@@ -60,7 +60,7 @@ const Home = () => {
 
   if (userDetails) {
     return (
-      <div className="container-xxl border mt-5 p-3">
+      <div className="container-xxl border border-2 rounded p-2 my-4">
         <button
           className="btn fixed-bottom m-5"
           onClick={() => {

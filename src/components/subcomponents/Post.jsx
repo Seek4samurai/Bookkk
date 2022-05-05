@@ -46,6 +46,7 @@ const Post = () => {
     }
   };
 
+  // Pagination --------------------------------------------------------------------------------------------
   const nextData = async () => {
     if (page < totalDocuments) {
       setPage(page + 10);
@@ -94,7 +95,7 @@ const Post = () => {
 
   useEffect(() => {
     fetchUser();
-  }, [userDetails]);
+  }, []);
 
   // Upvotes and Downvotes -------------------------------------------------------------------------
   const handleUpvotes = async (doc) => {
@@ -208,7 +209,7 @@ const Post = () => {
   // Re-rendering Post component when data or votes changes--------------------------------------------------
   useEffect(() => {
     getDocument();
-  }, [documents, upvote, downvote]);
+  }, [page, upvote, downvote]);
 
   return (
     <>
