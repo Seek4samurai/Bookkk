@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { account, db } from "../services/appwriteConfig";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Post from "./subcomponents/Post";
-import { FaHome } from "react-icons/fa";
+import { auth, db } from "../lib/firebaseConfig";
+import Post from "./Post";
 
 const Home = () => {
   const navigate = useNavigate();
+
   const [userDetails, setUserDetails] = useState();
   const [userInput, setUserInput] = useState({
+    postId: "",
     user: "",
     message: "",
     description: "",
@@ -19,59 +18,44 @@ const Home = () => {
 
   // Getting active user --------------------------------------------------
   const fetchUser = async () => {
-    try {
-      const data = await account.get();
-      setUserDetails(data);
-    } catch (error) {
-      console.log(error);
-    }
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserDetails(user);
+        setUserInput((prev) => {
+          return {
+            ...prev,
+            user: user.uid,
+          };
+        });
+      } else {
+        navigate("/");
+      }
+    });
   };
-
   useEffect(() => {
     fetchUser();
   }, []);
 
   const handleLogOut = async (e) => {
     e.preventDefault();
-    try {
-      await account.deleteSession(`current`);
+    auth.signOut().then(() => {
       navigate("/");
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
 
   // Posting data --------------------------------------------------
   const handlePost = async (e) => {
     e.preventDefault();
-    const currentDate = Date().toString();
-    try {
-      await db.createDocument(process.env.REACT_APP_COLLECTION_ID, "unique()", {
-        ...userInput,
-        user: userDetails.$id,
-        date: currentDate,
-      });
-      document.getElementById("inputfield").value = "";
-      document.getElementById("inputfieldDesc").value = "";
-    } catch (error) {
-      toast.error(error.message);
-    }
+    await db.collection("posts").add(userInput);
+    window.location.reload();
   };
 
   if (userDetails) {
     return (
       <div className="container-xxl border border-2 rounded p-2 my-4">
-        <button
-          className="btn fixed-bottom m-5"
-          onClick={() => {
-            window.location.reload();
-          }}
-        >
-          <FaHome size={"3rem"}></FaHome>
-        </button>
         <h3 className="text-center">Bookk</h3>
         <h6 className="d-flex justify-content-end">
-          Welcome, {userDetails.$id}
+          Welcome, {userDetails.uid}
         </h6>
         <div className="d-flex justify-content-end align-items-center">
           <button
@@ -119,7 +103,9 @@ const Home = () => {
             <button
               type="submit"
               className="btn btn-primary"
-              onClick={(e) => handlePost(e)}
+              onClick={(e) => {
+                handlePost(e);
+              }}
             >
               Post
             </button>
@@ -127,33 +113,19 @@ const Home = () => {
         </div>
 
         {/* All Posts here ----- */}
-        <div className="flex justify-center m-2">
+        <div className="flex justify-center m-3">
           <Post></Post>
         </div>
-
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
       </div>
     );
   } else {
     // asking to login if no user logged in
     return (
       <div className="flex text-center">
-        <h2 className="text-center my-3">
-          Please login first to see the homepage
-        </h2>
-        <button className="btn btn-dark" onClick={() => navigate("/")}>
+        <h2 className="text-center my-3">Loading user data...</h2>
+        {/* <button className="btn btn-dark" onClick={() => navigate("/")}>
           Login
-        </button>
+        </button> */}
       </div>
     );
   }

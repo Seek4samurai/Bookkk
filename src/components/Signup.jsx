@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { Link } from "react-router-dom";
-import { account } from "../services/appwriteConfig";
 import "react-toastify/dist/ReactToastify.css";
+import { auth, db } from "../lib/firebaseConfig";
 
 const Signup = () => {
+  const [user] = useAuthState(auth);
+
   const [userDetails, setUserDetails] = useState({
     name: "",
     email: "",
@@ -12,17 +15,24 @@ const Signup = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    try {
-      await account.create(
-        userDetails.name,
-        userDetails.email,
-        userDetails.password
-      );
-      await account.createSession(userDetails.email, userDetails.password);
-    } catch (error) {
-      console.log(error);
-    }
+    auth.createUserWithEmailAndPassword(
+      userDetails.email,
+      userDetails.password
+    );
   };
+
+  useEffect(() => {
+    if (user) {
+      db.collection("users").doc(user.uid).set(
+        {
+          email: user.email,
+          upvotedPosts: [],
+          downvotedPosts: [],
+        },
+        { merge: true }
+      );
+    }
+  }, [user]);
 
   return (
     <div>
@@ -99,7 +109,7 @@ const Signup = () => {
           </div>
           <div className="mb-3">
             <span>Already have an account ? </span>{" "}
-            <Link to="/login">
+            <Link to="/">
               <button className="btn btn-outline-primary">Login</button>
             </Link>
           </div>

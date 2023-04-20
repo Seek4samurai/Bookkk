@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { account } from "../services/appwriteConfig";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../lib/firebaseConfig";
 
 const Login = () => {
   const navigate = useNavigate();
+
   const [userDetails, setUserDetails] = useState({
     email: "",
     password: "",
@@ -12,12 +12,11 @@ const Login = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    try {
-      await account.createSession(userDetails.email, userDetails.password);
-      navigate("/home");
-    } catch (error) {
-      console.log(error);
-    }
+    auth
+      .signInWithEmailAndPassword(userDetails.email, userDetails.password)
+      .then(() => {
+        navigate("/home");
+      });
   };
 
   return (
@@ -26,7 +25,7 @@ const Login = () => {
         Bookkk - an internet's opinionator
       </h2>
       <p className="text-center fw-light fs-6">
-        Free, Open source and anonymous
+        Free, open source and anonymous
       </p>
       <div className="border border-2 rounded-3 m-4 p-4">
         <h3 className="mt-5 text-center fs-1">Login</h3>
@@ -81,14 +80,6 @@ const Login = () => {
               <span>First time here ? </span>
               <Link to="/signup">
                 <button className="btn btn-outline-primary mx-1">Signup</button>
-              </Link>
-            </div>
-            <div>
-              <span>Forget password ? </span>
-              <Link to="/forget-password">
-                <button className="btn btn-outline-danger mx-1">
-                  Forget Password
-                </button>
               </Link>
             </div>
           </div>
